@@ -7,6 +7,7 @@ let transactionLines = [], masterLines = [];
 let today;
 
 function main() {
+    console.log("Program started.");
     addTransactions();
 }
 
@@ -33,30 +34,34 @@ function load() {
 }
 
 function addTransactions() {
-    IO.writeFile("data/masterlist.csv", "", (error) => {}); //clears masterlist.csv to refresh it
+    console.log("Adding transactions");
+    IO.writeFile("data/masterlist.csv", "", (error) => {
+    }); //clears masterlist.csv to refresh it
     let totals = [];
     for (let i = 0; i < customers.length; i++) {
         totals[i] = 0;
     }
-    for (let i = 0; i < transactions.length - 1; i++) {
+    for (let i = 0; i < transactions.length; i++) {
 
         let id = Number(transactions[i][0]);
-        /*console.log(id);
-        console.log(customers);*/
-        if(id > customers.length) {
-            IO.appendFileSync(`data/masterlist.csv`,"Warning, customer for ID of" + id + "not found, is it a new customer?");
+        // console.log(id);
+        // console.log(customers)
+        if (id > customers.length) {
+            IO.appendFileSync(`data/masterlist.csv`, "Warning, customer for ID of " + id + " not found, is it a new customer? \n");
 
-        }
-        //ID, First Name, Last Name, Total spent
-        if (!isNaN(customers[id][3])) {
-        }
-        customers[id][3] = Number(transactions[i][2]) + Number(customers[id][3]);
+        } else {
+            //ID, First Name, Last Name, Total spent
+            if (!isNaN(customers[id][3])) {
+            }
+            customers[id][3] = Number(transactions[i][2]) + Number(customers[id][3]);
 
-        totals[id] = Number(transactions[i][2] + Number(totals[id]));
-        if (Number(totals[id]) > 750) {
-            totals[id] = 0;
-            couponPrintOut(id);
-        }}
+            totals[id] = Number(transactions[i][2] + Number(totals[id]));
+            if (Number(totals[id]) > 750) {
+                totals[id] = 0;
+                couponPrintOut(id);
+            }
+        }
+    }
 
 
     rewriteMasterList();
@@ -79,6 +84,7 @@ function rewriteMasterList() {
     for (let i = 0; i < customers.length; i++) {
         IO.appendFileSync(`data/masterlist.csv`, customers[i][0] + "," + customers[i][1] + "," + customers[i][2] + "," + customers[i][3] + "\n");
 
-        if(!isNaN(customers[i+1] )) IO.appendFileSync(`data/masterlist.csv`,"\n");}
+        if (customers[i + 1] > customers.length && customers[i + 1] != "") IO.appendFileSync(`data/masterlist.csv`, "\n");
+    }
 
 }
