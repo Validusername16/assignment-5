@@ -43,7 +43,10 @@ function addTransactions() {
         let id = Number(transactions[i][0]);
         /*console.log(id);
         console.log(customers);*/
+        if(id > customers.length) {
+            IO.appendFileSync(`data/masterlist.csv`,"Warning, customer for ID of" + id + "not found, is it a new customer?");
 
+        }
         //ID, First Name, Last Name, Total spent
         if (!isNaN(customers[id][3])) {
         }
@@ -75,5 +78,7 @@ function couponPrintOut(customerID) {
 function rewriteMasterList() {
     for (let i = 0; i < customers.length; i++) {
         IO.appendFileSync(`data/masterlist.csv`, customers[i][0] + "," + customers[i][1] + "," + customers[i][2] + "," + customers[i][3] + "\n");
-    }
+
+        if(!isNaN(customers[i+1] )) IO.appendFileSync(`data/masterlist.csv`,"\n");}
+
 }
