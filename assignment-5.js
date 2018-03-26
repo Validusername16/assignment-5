@@ -23,13 +23,13 @@ main();
 function load() {
     let masterFile = IO.readFileSync('data/masterlist.csv', 'utf-8');
     masterLines = masterFile.toString().split(/\r?\n/);
-    for (let i = 0; i < masterLines.length; i++) {
-        customers.push(masterLines[i].toString().split(/,/));
+    for (let line of masterLines) {
+        customers.push(line.toString().split(/,/));
     }
     let transactionFile = IO.readFileSync('data/transactions.csv', 'utf-8');
     transactionLines = transactionFile.toString().split(/\r?\n/);
-    for (let i = 0; i < transactionLines.length; i++) {
-        transactions.push(transactionLines[i].toString().split(/,/));
+    for (let line of transactionLines) {
+        transactions.push(line.toString().split(/,/));
     }
 }
 
@@ -55,8 +55,8 @@ function addTransactions() {
             }
             customers[id][3] = Number(transactions[i][2]) + Number(customers[id][3]);
 
-            totals[id] = Number(transactions[i][2] + Number(totals[id]));
-            if (Number(totals[id]) > 750) {
+            totals[id] += Number(transactions[i][2]); // totals[id] will always be a number
+            if (totals[id] > 750) {
                 totals[id] = 0;
                 couponPrintOut(id);
             }
@@ -68,11 +68,11 @@ function addTransactions() {
 
 }
 
+const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 function couponPrintOut(customerID) {
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
     let day = today.getDate() + 1;
-    let daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     let dayOfWeek = today.getDay();
     console.log("CONGRATULATIONS, " + customers[customerID][1] + " " + customers[customerID][2]);
     console.log("   You have spent enough money to receive a free haircut!");
@@ -81,10 +81,10 @@ function couponPrintOut(customerID) {
 }
 
 function rewriteMasterList() {
-    for (let i = 0; i < customers.length; i++) {
-        IO.appendFileSync(`data/masterlist.csv`, customers[i][0] + "," + customers[i][1] + "," + customers[i][2] + "," + customers[i][3] + "\n");
+    for (let i in customers) {
+        IO.appendFileSync(`data/masterlist.csv`, customers[i].join(",") + "\n");
 
-        if (customers[i + 1] > customers.length && customers[i + 1] != "") IO.appendFileSync(`data/masterlist.csv`, "\n");
+        if (customers[i + 1].length > customers.length && customers[i + 1] != "") IO.appendFileSync(`data/masterlist.csv`, "\n");
     }
 
 }
